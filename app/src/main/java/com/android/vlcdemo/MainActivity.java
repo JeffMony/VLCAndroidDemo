@@ -19,10 +19,10 @@ import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
-import org.videolan.libvlc.interfaces.IVLCVout;
 
 import java.util.ArrayList;
 
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements IVLCVout.OnNewVid
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION_OK) {
-            if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this,  "存储权限已开通", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this,  "存储权限被拒绝", Toast.LENGTH_SHORT).show();
