@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v == mPlayBtn) {
             String playerUrl = mVideoUrlView.getText().toString();
-            Intent intent = new Intent(this, PlayerActivity.class);
+            Intent intent = new Intent(this, CustomPlayerActivity.class);
             intent.putExtra("playerUrl", playerUrl);
             startActivity(intent);
         }

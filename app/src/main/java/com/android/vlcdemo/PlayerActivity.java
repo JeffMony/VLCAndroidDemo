@@ -26,8 +26,6 @@ import java.util.ArrayList;
 
 public class PlayerActivity extends AppCompatActivity implements IVLCVout.OnNewVideoLayoutListener, MediaPlayer.EventListener {
 
-    private static final String WRITE_EXTERNAL_STORAGE = "android.permission.WRITE_EXTERNAL_STORAGE";
-    private static final int REQUEST_PERMISSION_OK = 0x1;
     private static final boolean USE_SURFACE_VIEW = true;
     private static final boolean ENABLE_SUBTITLES =true;
     private static final String ASSET_FILENAME = "love.mkv";
@@ -336,5 +334,9 @@ public class PlayerActivity extends AppCompatActivity implements IVLCVout.OnNewV
     @Override
     public void onEvent(MediaPlayer.Event event) {
         LogUtils.i("onEvent : " + event.type);
+
+        if (event.type == MediaPlayer.Event.Playing) {
+            LogUtils.i("onEvent duration = " + mMediaPlayer.getLength());
+        }
     }
 }
