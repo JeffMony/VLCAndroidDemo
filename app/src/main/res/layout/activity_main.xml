@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    
-    <FrameLayout
-        android:id="@+id/video_surface_frame"
+
+    <EditText
+        android:id="@+id/video_url_view"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:foregroundGravity="clip_horizontal|clip_vertical"
-        android:layout_gravity="center" >
-        
-        <ViewStub
-            android:id="@+id/surface_stub"
-            android:layout="@layout/surface_view"
+        android:layout_height="100dp"
+        android:gravity="top"/>
+
+    <Button
+        android:id="@+id/play_btn"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Click to Play"
+        android:textSize="20sp"
+        android:layout_below="@id/video_url_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/video_layout"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/play_btn"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/video_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        
-        <ViewStub
-            android:id="@+id/subtitles_surface_stub"
-            android:layout="@layout/surface_view"
-            android:layout_width="1dp"
-            android:layout_height="1dp" />
+            android:layout_height="300dp">
+        </ListView>
 
-        <ViewStub
-            android:id="@+id/texture_stub"
-            android:layout="@layout/texture_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    </LinearLayout>
 
-    </FrameLayout>
-
-</FrameLayout>
+</RelativeLayout>

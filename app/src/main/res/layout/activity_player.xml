@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <FrameLayout
+        android:id="@+id/video_surface_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="clip_horizontal|clip_vertical"
+        android:layout_gravity="center" >
+        
+        <ViewStub
+            android:id="@+id/surface_stub"
+            android:layout="@layout/surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        
+        <ViewStub
+            android:id="@+id/subtitles_surface_stub"
+            android:layout="@layout/surface_view"
+            android:layout_width="1dp"
+            android:layout_height="1dp" />
+
+        <ViewStub
+            android:id="@+id/texture_stub"
+            android:layout="@layout/texture_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+</FrameLayout>
