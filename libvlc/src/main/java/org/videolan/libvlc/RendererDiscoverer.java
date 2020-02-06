@@ -26,15 +26,12 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 
-import org.videolan.libvlc.interfaces.AbstractVLCEvent;
-import org.videolan.libvlc.interfaces.ILibVLC;
-
 public class RendererDiscoverer extends VLCObject<RendererDiscoverer.Event> {
     private final static String TAG = "LibVLC/RendererDiscoverer";
 
     final List<RendererItem> mRenderers = new ArrayList<>();
 
-    public static class Event extends AbstractVLCEvent {
+    public static class Event extends VLCEvent {
 
         public static final int ItemAdded   = 0x502;
         public static final int ItemDeleted = 0x503;
@@ -52,7 +49,7 @@ public class RendererDiscoverer extends VLCObject<RendererDiscoverer.Event> {
         }
 
         @Override
-        public void release() {
+        void release() {
             item.release();
             super.release();
         }
@@ -63,17 +60,17 @@ public class RendererDiscoverer extends VLCObject<RendererDiscoverer.Event> {
         return new RendererItem(name, type, iconUrl, flags, ref);
     }
 
-    public interface EventListener extends AbstractVLCEvent.Listener<Event> {}
+    public interface EventListener extends VLCEvent.Listener<RendererDiscoverer.Event> {}
 
     /**
      * Create a MediaDiscover.
      *
-     * @param ILibVLC a valid LibVLC
+     * @param libVLC a valid LibVLC
      * @param name Name of the vlc service discovery.
      */
-    public RendererDiscoverer(ILibVLC ILibVLC, String name) {
-        super(ILibVLC);
-        nativeNew(ILibVLC, name);
+    public RendererDiscoverer(LibVLC libVLC, String name) {
+        super(libVLC);
+        nativeNew(libVLC, name);
     }
 
     /**
@@ -101,8 +98,8 @@ public class RendererDiscoverer extends VLCObject<RendererDiscoverer.Event> {
         super.setEventListener(listener);
     }
 
-    public static Description[] list(ILibVLC ILibVlc) {
-        return nativeList(ILibVlc);
+    public static Description[] list(LibVLC libVlc) {
+        return nativeList(libVlc);
     }
 
     public static class Description {
@@ -157,10 +154,10 @@ public class RendererDiscoverer extends VLCObject<RendererDiscoverer.Event> {
     }
 
     /* JNI */
-    private native void nativeNew(ILibVLC ILibVLC, String name);
+    private native void nativeNew(LibVLC libVLC, String name);
     private native void nativeRelease();
     private native boolean nativeStart();
     private native void nativeStop();
-    private static native Description[] nativeList(ILibVLC ILibVLC);
+    private static native Description[] nativeList(LibVLC libVLC);
     private native RendererItem nativeNewItem(long ref);
 }

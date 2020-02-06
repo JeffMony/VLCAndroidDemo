@@ -14,9 +14,8 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.android.libvlc.BuildConfig;
-import com.android.libvlc.R;
-
+import org.videolan.BuildConfig;
+import org.videolan.R;
 import org.videolan.libvlc.RendererItem;
 
 import androidx.annotation.NonNull;

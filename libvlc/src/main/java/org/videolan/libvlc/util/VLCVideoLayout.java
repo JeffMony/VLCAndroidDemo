@@ -8,12 +8,11 @@ import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.android.libvlc.R;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import org.videolan.R;
 import org.videolan.libvlc.MediaPlayer;
 
 /**

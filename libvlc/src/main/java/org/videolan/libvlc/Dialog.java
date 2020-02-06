@@ -24,13 +24,11 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.MainThread;
 
-import org.videolan.libvlc.interfaces.ILibVLC;
-
 @SuppressWarnings("unused, JniMissingFunction")
 public abstract class Dialog {
 
     /**
-     * Dialog Callback, see {@link Dialog#setCallbacks(ILibVLC, Callbacks)}
+     * Dialog Callback, see {@link Dialog#setCallbacks(LibVLC, Callbacks)}
      */
     public interface Callbacks {
         /**
@@ -166,15 +164,15 @@ public abstract class Dialog {
     /**
      * Register callbacks in order to handle VLC dialogs
      *
-     * @param ILibVLC valid LibVLC object
+     * @param libVLC valid LibVLC object
      * @param callbacks dialog callbacks or null to unregister
      */
     @MainThread
-    public static void setCallbacks(ILibVLC ILibVLC, Callbacks callbacks) {
+    public static void setCallbacks(LibVLC libVLC, Callbacks callbacks) {
         if (callbacks != null && sHandler == null)
             sHandler = new Handler(Looper.getMainLooper());
         sCallbacks = callbacks;
-        nativeSetCallbacks(ILibVLC, callbacks != null);
+        nativeSetCallbacks(libVLC, callbacks != null);
     }
 
     /**
@@ -478,5 +476,5 @@ public abstract class Dialog {
         });
     }
 
-    private static native void nativeSetCallbacks(ILibVLC ILibVLC, boolean enabled);
+    private static native void nativeSetCallbacks(LibVLC libVLC, boolean enabled);
 }

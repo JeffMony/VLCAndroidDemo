@@ -25,12 +25,9 @@ import android.os.Handler;
 import androidx.annotation.MainThread;
 import android.util.Log;
 
-import org.videolan.libvlc.FactoryManager;
-import org.videolan.libvlc.interfaces.IMediaFactory;
-import org.videolan.libvlc.interfaces.ILibVLC;
-import org.videolan.libvlc.interfaces.IMedia;
+import org.videolan.libvlc.LibVLC;
+import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaDiscoverer;
-import org.videolan.libvlc.interfaces.IMediaList;
 import org.videolan.libvlc.MediaList;
 
 import java.util.ArrayList;
@@ -38,15 +35,14 @@ import java.util.ArrayList;
 public class MediaBrowser {
     private static final String TAG = "MediaBrowser";
 
-    private final ILibVLC mILibVlc;
+    private final LibVLC mLibVlc;
     private final ArrayList<MediaDiscoverer> mMediaDiscoverers = new ArrayList<MediaDiscoverer>();
-    private final ArrayList<IMedia> mDiscovererMediaArray = new ArrayList<IMedia>();
-    private IMediaList mBrowserMediaList;
-    private IMedia mMedia;
+    private final ArrayList<Media> mDiscovererMediaArray = new ArrayList<Media>();
+    private MediaList mBrowserMediaList;
+    private Media mMedia;
     private EventListener mEventListener;
     private Handler mHandler;
     private boolean mAlive;
-    private IMediaFactory mFactory;
 
     private static final String IGNORE_LIST_OPTION =  ":ignore-filetypes=";
     private String mIgnoreList = "db,nfo,ini,jpg,jpeg,ljpg,gif,png,pgm,pgmyuv,pbm,pam,tga,bmp,pnm,xpm,xcf,pcx,tif,tiff,lbm,sfv,txt,sub,idx,srt,ssa,ass,smi,utf,utf-8,rt,aqt,txt,usf,jss,cdg,psb,mpsub,mpl2,pjs,dks,stl,vtt,ttml";
@@ -69,14 +65,14 @@ public class MediaBrowser {
          * @param index
          * @param media
          */
-        void onMediaAdded(int index, IMedia media);
+        void onMediaAdded(int index, Media media);
         /**
          * Received when a media is removed (Happens only when you discover networks)
          * @param index
          * @param media Released media, but cached attributes are still
          * available (like media.getMrl())
          */
-        void onMediaRemoved(int index, IMedia media);
+        void onMediaRemoved(int index, Media media);
         /**
          * Called when browse ended.
          * It won't be called when you discover networks
@@ -91,10 +87,9 @@ public class MediaBrowser {
      *
      * With this constructor, callbacks will be executed in the main thread
      */
-    public MediaBrowser(ILibVLC libvlc, EventListener listener) {
-        mFactory = ((IMediaFactory) FactoryManager.getFactory(IMediaFactory.factoryId));
-        mILibVlc = libvlc;
-        mILibVlc.retain();
+    public MediaBrowser(LibVLC libvlc, EventListener listener) {
+        mLibVlc = libvlc;
+        mLibVlc.retain();
         mEventListener = listener;
         mAlive = true;
     }
@@ -105,7 +100,7 @@ public class MediaBrowser {
      * @param listener The Listener which will receive callbacks
      * @param handler Optional Handler in which callbacks will be posted. If set to null, a Handler will be created running on the main thread
      */
-    public MediaBrowser(ILibVLC libvlc, EventListener listener, Handler handler) {
+    public MediaBrowser(LibVLC libvlc, EventListener listener, Handler handler) {
         this(libvlc, listener);
         mHandler = handler;
     }
@@ -134,7 +129,7 @@ public class MediaBrowser {
         reset();
         if (!mAlive)
             throw new IllegalStateException("MediaBrowser released more than one time");
-        mILibVlc.release();
+        mLibVlc.release();
         mAlive = false;
     }
 
@@ -149,7 +144,7 @@ public class MediaBrowser {
     }
 
     private void startMediaDiscoverer(String discovererName) {
-        MediaDiscoverer md = new MediaDiscoverer(mILibVlc, discovererName);
+        MediaDiscoverer md = new MediaDiscoverer(mLibVlc, discovererName);
         mMediaDiscoverers.add(md);
         final MediaList ml = md.getMediaList();
         ml.setEventListener(mDiscovererMediaListEventListener, mHandler);
@@ -165,7 +160,7 @@ public class MediaBrowser {
         reset();
 
         final MediaDiscoverer.Description descriptions[] =
-                MediaDiscoverer.list(mILibVlc, MediaDiscoverer.Description.Category.Lan);
+                MediaDiscoverer.list(mLibVlc, MediaDiscoverer.Description.Category.Lan);
         if (descriptions == null)
             return;
         for (MediaDiscoverer.Description description : descriptions) {
@@ -188,11 +183,11 @@ public class MediaBrowser {
      * Browse to the specified local path starting with '/'.
      *
      * @param path
-     * @param flags see {@link Flag}
+     * @param flags see {@link MediaBrowser.Flag}
      */
     @MainThread
     public void browse(String path, int flags) {
-        final IMedia media = mFactory.getFromLocalPath(mILibVlc, path);
+        final Media media = new Media(mLibVlc, path);
         browse(media, flags);
         media.release();
     }
@@ -201,11 +196,11 @@ public class MediaBrowser {
      * Browse to the specified uri.
      *
      * @param uri
-     * @param flags see {@link Flag}
+     * @param flags see {@link MediaBrowser.Flag}
      */
     @MainThread
     public void browse(Uri uri, int flags) {
-        final IMedia media = mFactory.getFromUri(mILibVlc, uri);
+        final Media media = new Media(mLibVlc, uri);
         browse(media, flags);
         media.release();
     }
@@ -214,10 +209,10 @@ public class MediaBrowser {
      * Browse to the specified media.
      *
      * @param media Can be a media returned by MediaBrowser.
-     * @param flags see {@link Flag}
+     * @param flags see {@link MediaBrowser.Flag}
      */
     @MainThread
-    public void browse(IMedia media, int flags) {
+    public void browse(Media media, int flags) {
         /* media can be associated with a medialist,
          * so increment ref count in order to don't clean it with the medialist
          */
@@ -227,9 +222,9 @@ public class MediaBrowser {
             media.addOption(":no-sub-autodetect-file");
         if ((flags & Flag.ShowHiddenFiles) != 0)
             media.addOption(":show-hiddenfiles");
-        int mediaFlags = IMedia.Parse.ParseNetwork;
+        int mediaFlags = Media.Parse.ParseNetwork;
         if ((flags & Flag.Interact) != 0)
-            mediaFlags |= IMedia.Parse.DoInteract;
+            mediaFlags |= Media.Parse.DoInteract;
         reset();
         mBrowserMediaList = media.subItems();
         mBrowserMediaList.setEventListener(mBrowserMediaListEventListener, mHandler);
@@ -249,10 +244,10 @@ public class MediaBrowser {
      * Get a media at a specified index. Should be released with {@link #release()}.
      */
     @MainThread
-    public IMedia getMediaAt(int index) {
+    public Media getMediaAt(int index) {
         if (index < 0 || index >= getMediaCount())
             throw new IndexOutOfBoundsException();
-        final IMedia media = mBrowserMediaList != null ? mBrowserMediaList.getMediaAt(index) :
+        final Media media = mBrowserMediaList != null ? mBrowserMediaList.getMediaAt(index) :
                 mDiscovererMediaArray.get(index);
         media.retain();
         return media;

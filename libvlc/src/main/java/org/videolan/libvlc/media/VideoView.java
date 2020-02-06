@@ -42,9 +42,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.MediaController;
 
 
-import org.videolan.libvlc.interfaces.ILibVLC;
 import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.Media;
 
 import java.io.InputStream;
@@ -53,11 +51,11 @@ import java.util.Map;
 public class VideoView extends SurfaceView
         implements MediaController.MediaPlayerControl {
 
-    private static ILibVLC sILibVLC;
+    private static LibVLC sLibVLC;
 
     public VideoView(Context context) {
         super(context);
-        sILibVLC = new LibVLC(context, null);
+        sLibVLC = new LibVLC(context, null);
     }
 
     public VideoView(Context context, AttributeSet attrs) {
@@ -90,11 +88,11 @@ public class VideoView extends SurfaceView
     }
 
     public void setVideoPath(String path) {
-        final IMedia media = new Media(sILibVLC, path);
+        final Media media = new Media(sLibVLC, path);
     }
 
     public void setVideoURI(Uri uri) {
-        final IMedia media = new Media(sILibVLC, uri);
+        final Media media = new Media(sLibVLC, uri);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

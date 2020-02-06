@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-package org.videolan.libvlc.interfaces;
+package org.videolan.libvlc;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;

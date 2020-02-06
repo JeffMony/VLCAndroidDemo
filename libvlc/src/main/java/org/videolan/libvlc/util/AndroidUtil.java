@@ -27,14 +27,14 @@ import java.io.File;
 
 public class AndroidUtil {
 
-    public static final boolean isPOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
-    public static final boolean isOOrLater = isPOrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
-    public static final boolean isNougatMR1OrLater = isOOrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
-    public static final boolean isNougatOrLater = isNougatMR1OrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-    public static final boolean isMarshMallowOrLater = isNougatOrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    public static final boolean isLolliPopOrLater = isMarshMallowOrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    public static final boolean isKitKatOrLater = isLolliPopOrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    public static final boolean isJellyBeanMR2OrLater = isKitKatOrLater || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+    public static final boolean isPOrLater = android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
+    public static final boolean isOOrLater = isPOrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    public static final boolean isNougatMR1OrLater = isOOrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
+    public static final boolean isNougatOrLater = isNougatMR1OrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    public static final boolean isMarshMallowOrLater = isNougatOrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    public static final boolean isLolliPopOrLater = isMarshMallowOrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    public static final boolean isKitKatOrLater = isLolliPopOrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    public static final boolean isJellyBeanMR2OrLater = isKitKatOrLater || android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
 
     public static File UriToFile(Uri uri) {
         return new File(uri.getPath().replaceFirst("file://", ""));
