@@ -7,5 +7,25 @@
         android:id="@+id/video_surface_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    
+    <SeekBar
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/video_surface_view"
+        android:max="1000"
+        android:id="@+id/video_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    
+    <TextView
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/video_progress_view"
+        android:text="XXXX:XXXX"
+        android:textSize="20sp"
+        android:textColor="#ff0000"
+        android:id="@+id/time_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

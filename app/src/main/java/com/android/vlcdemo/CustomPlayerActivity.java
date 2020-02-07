@@ -2,14 +2,21 @@ package com.android.vlcdemo;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.vlcdemo.utils.LogUtils;
+import com.android.vlcdemo.utils.TimeUtils;
 
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
@@ -21,14 +28,26 @@ import java.util.ArrayList;
 public class CustomPlayerActivity extends AppCompatActivity implements MediaPlayer.EventListener, IVLCVout.OnNewVideoLayoutListener {
 
     private static final String ASSET_FILENAME = "love.mkv";
+    private static final int MSG_UPDATE_PROGRESS = 0x1;
 
     private SurfaceView mSurfaceView;
-    private String mPlayerUrl;
+    private SeekBar mSeekBar;
+    private TextView mTimeView;
 
+    private String mPlayerUrl;
     private LibVLC mLibVLC = null;
     private MediaPlayer mMediaPlayer = null;
     private int mVideoWidth = 0;
     private int mVideoHeight = 0;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == MSG_UPDATE_PROGRESS) {
+                updateVideoProgress();
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +63,26 @@ public class CustomPlayerActivity extends AppCompatActivity implements MediaPlay
 
     private void initViews() {
         mSurfaceView = (SurfaceView) findViewById(R.id.video_surface_view);
+        mSeekBar = (SeekBar) findViewById(R.id.video_progress_view);
+        mTimeView = (TextView) findViewById(R.id.time_text_view);
+
+
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     private void initPlayer() {
@@ -71,6 +110,8 @@ public class CustomPlayerActivity extends AppCompatActivity implements MediaPlay
             return;
         }
         mMediaPlayer.play();
+
+        mHandler.sendEmptyMessage(MSG_UPDATE_PROGRESS);
     }
 
     private void updateSurfaceFrame() {
@@ -84,9 +125,20 @@ public class CustomPlayerActivity extends AppCompatActivity implements MediaPlay
         mSurfaceView.setLayoutParams(params);
     }
 
+    private void updateVideoProgress() {
+        long currentPosition = mMediaPlayer.getTime();
+        long duration = mMediaPlayer.getLength();
+        int progress = (int)(currentPosition * 1.0f / duration * 1000);
+        mSeekBar.setProgress(progress);
+        mTimeView.setText(TimeUtils.getVideoTimeString(currentPosition) + " / " + TimeUtils.getVideoTimeString(duration));
+        mHandler.sendEmptyMessageDelayed(MSG_UPDATE_PROGRESS, 1000);
+    }
+
     @Override
     public void onEvent(MediaPlayer.Event event) {
-
+        if (event.type == MediaPlayer.Event.Playing) {
+            mTimeView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -103,9 +155,15 @@ public class CustomPlayerActivity extends AppCompatActivity implements MediaPlay
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMediaPlayer.stop();
+        mHandler.removeMessages(MSG_UPDATE_PROGRESS);
+        mMediaPlayer.release();
         mMediaPlayer.getVLCVout().detachViews();
     }
 }
